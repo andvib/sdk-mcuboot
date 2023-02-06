@@ -19,6 +19,7 @@
 #include <assert.h>
 #include <zephyr/kernel.h>
 #include <zephyr/devicetree.h>
+#include <zephyr/init.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/sys/__assert.h>
 #include <zephyr/drivers/flash.h>
@@ -41,6 +42,8 @@
 #include "bootutil/fault_injection_hardening.h"
 #include "bootutil/mcuboot_status.h"
 #include "flash_map_backend/flash_map_backend.h"
+
+#include "imcu_ipc.h"
 
 #ifdef CONFIG_FW_INFO
 #include <fw_info.h>
@@ -683,3 +686,14 @@ void main(void)
     while (1)
         ;
 }
+
+static int imcu_ipc_init(const struct device *dev)
+{
+    ARG_UNUSED(dev);
+
+    imcu_ipc_client_init();
+
+    return 0;
+}
+
+SYS_INIT(imcu_ipc_init, PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_OBJECTS);
